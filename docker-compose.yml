@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+    odoo:
+        image: odoo:15.0
+        platform: linux/amd64
+        container_name: mi_contenedor_mel
+        depends_on:
+            - postgresql
+        tty: true
+        stdin_open: true
+        ports:
+            - "8069:8069"
+        volumes:
+            - ./addons:/mnt/extra-addons
+            - ./conf:/etc/odoo
+        environment:
+            - HOST=postgres10
+            - USER=odoo
+            - PASSWORD=odoo
+    postgresql:
+        image: postgres:10
+        container_name: postgres10_mel
+        ports:
+            - "5432:5432"
+        environment:
+            - POSTGRES_DB=postgres
+            - POSTGRES_PASSWORD=odoo
+            - POSTGRES_USER=odoo
