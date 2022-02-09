@@ -1,0 +1,83 @@
+<?xml verison="1.0" encoding="UTF-8" ?>
+<odoo>
+    #nombre de la tabla a la cual guarda cualquier tipo de vista
+    <record id="view_presupuesto_form" model="ir.ui.view">
+        #nombre del campo al cual se hará insert
+        <field name="name">Vsita formulario de presupuesto de peliculas</field> 
+        <field name="model">presupuesto</field> #modelo al cual creamos la vista
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button string="Aprobado" type="object" name="aprobar_presupuesto" class="oe_highlight" states="borrador"/>
+                    <button string="Cancelar" type="object" name="cancelar_presupuesto" class="oe_highlight" states="borrador,aprobado"/>
+                    <field name="state" widget="statusbar" statusbar_visible="borrado,aprobado"/>
+                </header>
+                #diseño hoja
+                <sheet> 
+                    #{'invisible':[('campo a evaluar','condicion','valor a contrastar')]}
+                    <widget name="web_ribbon" title="Archivado" bg_color="bg-danger" attrs"{'invisible':[('active','=','True')]}"/>
+                    <field name="image_1920" widget="image" class="oe_avatar" 
+                           options="{'preview_image':'image_128','size':['',128]}"/>
+                    <div class="oe_title">
+                        <div class="o_row">
+                            #invisible="1" siempre será invisible el campo
+                            <field name = "active" invisible="1"/>
+                            <h1 style="display:flex;">
+                                <field name="name"
+                                        placeholder="Nombre de la pelicula"
+                                        requiered="1"
+                                        default_focus="1"
+                                        class="oe_inline"/>
+                                <fiel name="puntuacion" 
+                                      widget="percentpie" 
+                                      string=" "
+                                      style="padding-left: 10px;"
+                                      class="oe_inline"/>
+                                <fiel name="puntuacion2"
+                                      placeholder="Puntuacion de Usuario"
+                                      class="oe_edit_only oe_inline"/>
+                            </h1>
+                        </div>
+                        <div class="o_row" style="display:flex;">
+                            <field name="clasificacion" requiered="1"/>
+                            <span class="fa fa-cirle"
+                                  attrs="{'invisible': [('clasificacion','=', False),
+                                                        ('fch_estreno),'=',False]}"
+                                  style="font-size: 8px; padding: 5px 5px;">
+                            <field name="fch_estreno"/>
+                        </div>
+                        <div class="o_row">
+                            <field name="genero_ids" widget="many2many_tags" style="display:flex;"/>
+                        </div>
+                    </div>
+                    <!-- ancho de las columnas group general-->
+                    <group string="Datos Principales" style="margin-top:-10px;">
+                        <field name="vista_general" 
+                               placeholder="Vista general..." 
+                               attrs="{'readonly': [('state','!=','borrador')]}"/>
+                        <!-- columna izquierda-->
+                        <group> 
+                            <field name="director_id" 
+                                   domain="[('category_id','in','['categoria_director_id])]"
+                                   options="{'no_create' : True, 'no_open' : True}"/>
+                            <field name="categoria_director_id" invisible="1"/>
+                            <field name="link_trailer" widget="url"/>
+                            <field name="fch_aprobado" readonly="1"/>
+                        </group>
+                        <!--columna derecha-->
+                        <group> 
+                        <!-- documento pdf, se sube y se guarda en la bd y cuando se descargar, lo hace con el nombre del libro-->
+                            <field name="es_libro"
+                                   widget="boolean_toggle"/>
+                            <field name="libro"
+                                   file_name="libro_filename"
+                                   attrs="{'invisible':[('es libro','=','False')]}">
+                            <field name="libro_filename" invisible="1"/>
+                        </group>
+                    </group>
+                #diseño hoja
+                </sheet>
+            </form>
+        </field> 
+    </record>
+</odoo>
