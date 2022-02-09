@@ -1,0 +1,14 @@
+<?xml verison="1.0" encoding="UTF-8" ?>
+<odoo>
+<!-- record es un insert en SQL y va a realizar un insert a la tabla ir.action.act_window-->
+    <record id="action_open_presupuesto" model="ir.action.act_window">
+    <!-- campos que se insertaran en el modelo (tabla)-->
+        <field name="name">Presupuesto</field> <!--se muestra en pantalla (label o titulo)-->
+        <field name="res_model">Presupuesto</field> <!--modelo que se disparará-->
+        <field name="view_mode">tree,form</field> <!--vista lista y vista formulario-->
+    </record>
+
+    <menuitem id="menu_principal" name="Peliculas"/>
+    <menuitem id="menu_horizontal" name="Mis Modelos"/>
+    <menuitem id="menu_vertical_presupuesto" name="Presupuesto" parent="menu_horizontal" action="action_open_presupuesto"/>
+</odoo>
