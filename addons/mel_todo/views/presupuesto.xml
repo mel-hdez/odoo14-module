@@ -12,6 +12,9 @@
                     <button string="Cancelar" type="object" name="cancelar_presupuesto" class="oe_highlight" states="borrador,aprobado"/>
                     <field name="state" widget="statusbar" statusbar_visible="borrado,aprobado"/>
                 </header>
+                <div class="alert alert-info" role="alert" style="margin-bottom:0;" attrs="{'invisible':[('dsc_clasificacion','=','False')]}">
+                    <field name="dsc_clasificacion" readonly="1"/>
+                </div>
                 #diseño hoja
                 <sheet> 
                     #{'invisible':[('campo a evaluar','condicion','valor a contrastar')]}

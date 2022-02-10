@@ -5,6 +5,7 @@ import logging
 from email.policy import default
 from attr import field
 from odoo import fields, models, api 
+from odoo.exceptions import UserError
 
 #variables globales
 logger = logging.getLogger(__name__)
@@ -22,6 +23,10 @@ class Presupuesto(models.Model):
         ('R','R'), #en compañia de un adulto obligatorio
         ('NC-17','NC-17') #mayores de 18
     ], string = 'Clasificación')
+
+    dsc_clasificacion = fields.Char(
+        string = 'Descripción Clasificación'
+        )
 
     fch_estreno = fields.Date(
         string = 'Fecha de estreno'
@@ -92,3 +97,45 @@ class Presupuesto(models.Model):
 
     def cancelar_presupuesto(self):
         self.state = 'cancelado'
+
+    #sobre escribir funciones odoo
+    def unlink(self):
+
+        if self.state != 'cancelado':
+            raise UserError ('No se puede eliminar el regitro porque no se encuentra en el estado CANCELADO')
+        super(Presupuesto, self).unlink()
+
+    #funciones propias de odoo
+    @api.model
+    def create(self, variables):
+        logger.info('***** variables: {0}'.format(variables))
+        return super(Presupuesto, self).create(variables)
+
+    def write (self, variables):
+        logger.info('***** variables: {0}'.format(variables))
+        if 'clasificacion' in variables:
+            raise UserError('¡La clasificación no se puede editar!')
+        return super(Presupuesto, self).write(variables)
+    
+    def copy(self, default = None):
+        default =  dict(default or {})
+        default ['name'] = self.name + '(Copia)'
+        default ['puntuacion2'] = 1
+        return super(Presupuesto, self).copy(default)
+       
+    @api.onchange('clasificacion')
+    def _onchange_clasificacion (self):
+        if self.clasificacion:
+            if self.clasificacion == 'G':
+                self.dsc_clasificacion = 'Publico General'
+            if self.clasificacion == 'PG':
+                self.dsc_clasificacion = 'Se recomienda la compañia de un adulto'
+            if self.clasificacion == 'PG-13':
+                self.dsc_clasificacion = 'Mayores de 13'
+            if self.clasificacion == 'R':
+                self.dsc_clasificacion = 'En compañia de un adulto obligatorio'
+            if self.clasificacion == 'NC-17':
+                self.dsc_clasificacion = 'Mayores de 18'
+        else:
+            self.dsc_clasificacion = False
+            
